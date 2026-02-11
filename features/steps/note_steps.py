@@ -59,46 +59,15 @@ def delete_note(context):
 
 @when('user searches a note by non-existent ID')
 def search_invalid_note(context):
-    response = context.api.get_all_notes()
-    assert response.status_code == 200
-    notes = response.json()
-    if notes:
-        max_id = 0
-        for note in notes:
-            if note["id"] > max_id:
-                max_id = note["id"]
-        invalid_id = max_id + 1
-    else:
-        invalid_id = 1
-    context.response = context.api.get_note(invalid_id)
+    context.response = context.api.get_note((search_max_id(context)))
 
 @when('user sends edited non-existent note')
 def edit_non_existent_note(context):
-    response = context.api.get_all_notes()
-    notes = response.json()
-    if notes:
-        max_id = 0
-        for note in notes:
-            if note["id"] > max_id:
-                max_id = note["id"]
-        invalid_id = max_id + 1
-    else:
-        invalid_id = 1
-    context.response = context.api.edit_note(invalid_id, title="edited_title", content="edited_content")
+    context.response = context.api.edit_note((search_max_id(context)), title="edited_title", content="edited_content")
 
 @when('user deletes non-existent note')
 def delete_non_existent_note(context):
-    response = context.api.get_all_notes()
-    notes = response.json()
-    if notes:
-        max_id = 0
-        for note in notes:
-            if note["id"] > max_id:
-                max_id = note["id"]
-        invalid_id = max_id + 1
-    else:
-        invalid_id = 1
-    context.response = context.api.delete_note(invalid_id)
+    context.response = context.api.delete_note(search_max_id(context))
 
 
 # ---------- THEN ----------
@@ -142,3 +111,15 @@ def note_is_deleted(context):
 @then('response status code is 404')
 def response_status_code_404(context):
     assert context.response.status_code == 404
+
+def search_max_id(context):
+    response = context.api.get_all_notes()
+    notes = response.json()
+    if notes:
+        max_id = 0
+        for note in notes:
+            if note["id"] > max_id:
+                max_id = note["id"]
+        return max_id + 1
+    else:
+        return 1
