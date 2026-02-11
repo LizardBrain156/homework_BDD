@@ -85,7 +85,7 @@ def response_status_code_422(context):
 @then("existing notes are sent to them")
 def show_existing_notes(context):
     assert context.response.status_code == 200
-    assert isinstance(context.response.json(), list)
+    assert context.response.json()
 
 
 @then('it is shown to them')
