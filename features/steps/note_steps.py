@@ -97,7 +97,6 @@ def note_is_shown(context):
 @then('edited note is shown')
 def edited_note_is_shown(context):
     data = context.response.json()
-
     assert context.response.status_code == 200
     assert data["id"] == context.note_id
     assert data["title"] == "edited_title"
@@ -111,6 +110,11 @@ def note_is_deleted(context):
 @then('response status code is 404')
 def response_status_code_404(context):
     assert context.response.status_code == 404
+
+@then('empty list is returned')
+def no_notes(context):
+    assert context.response.status_code == 200
+    assert context.response.json() == []
 
 def search_max_id(context):
     response = context.api.get_all_notes()
